@@ -1,0 +1,441 @@
+:root {
+    /* --- الألوان الأساسية (نفس ألوانك) --- */
+    --bg-cream: #F9F7F2;
+    --white: #FFFFFF;
+    --black: #1A1A1A;
+    --gray-light: #E0E0E0;
+    --gray-bg: #F5F5F5;
+    --text-gray: #666666;
+    --accent: #D4AF37;
+    --danger: #e74c3c;
+
+    /* --- تحسينات الظلال والانحناءات --- */
+    --shadow-soft: 0 8px 24px rgba(0,0,0,0.04); /* ظل أنعم وأفخم */
+    --shadow-card: 0 2px 8px rgba(0,0,0,0.03);
+    --radius: 16px; /* انحناء أكثر حداثة قليلاً */
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* --- دعم مناطق الأمان (iPhone Notch/Home Indicator) --- */
+    --safe-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+/* --- إعدادات أساسية --- */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+body { 
+    font-family: 'IBM Plex Sans Arabic', sans-serif; 
+    background-color: var(--bg-cream); 
+    color: var(--black);
+    margin: 0;
+    /* حساب المسافة السفلية بدقة لتجنب اختفاء المحتوى خلف الناف بار */
+    padding-bottom: calc(70px + var(--safe-bottom)); 
+    min-height: 100vh;
+    font-size: 15px;
+    overflow-x: hidden;
+}
+
+/* --- Header (موبايل) --- */
+.mobile-header {
+    background: rgba(249, 247, 242, 0.92); /* شفافية زجاجية فاخرة */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+}
+
+.brand-logo { font-weight: 800; font-size: 1.6rem; letter-spacing: -0.5px; color: var(--black); }
+
+/* --- Search --- */
+.search-container { padding: 10px 20px 20px; }
+.search-wrapper { position: relative; }
+.search-wrapper input {
+    width: 100%;
+    height: 50px; /* زيادة الارتفاع لسهولة اللمس */
+    padding: 0 20px 0 50px;
+    border: 1px solid transparent;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: var(--transition);
+}
+.search-wrapper input:focus { 
+    border-color: var(--accent); 
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.15); /* توهج ذهبي خفيف */
+}
+.search-wrapper i {
+    position: absolute; left: 20px; top: 50%; transform: translateY(-50%); 
+    color: #aaa; font-size: 1.1rem;
+}
+
+/* --- Grid & Cards --- */
+.content-grid {
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.product-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 12px;
+    display: flex;
+    gap: 15px;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    border: 1px solid rgba(0,0,0,0.01);
+    align-items: center;
+    transition: var(--transition);
+}
+.product-card:active { transform: scale(0.98); background-color: #fafafa; }
+
+.card-img {
+    width: 85px; height: 85px; /* تكبير طفيف للصورة */
+    border-radius: 10px;
+    object-fit: cover;
+    background: var(--gray-bg);
+    border: 1px solid rgba(0,0,0,0.05);
+    flex-shrink: 0;
+}
+
+.card-info { flex: 1; min-width: 0; /* يمنع النص من كسر التصميم */ }
+.card-cat { font-size: 0.7rem; color: var(--accent); font-weight: 600; margin-bottom: 4px; display: block; }
+.card-title { font-weight: 700; font-size: 1rem; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-price { font-weight: 800; color: var(--black); font-size: 1.05rem; }
+.old-price { text-decoration: line-through; color: #ccc; font-size: 0.8rem; margin-left: 6px; font-weight: 400; }
+
+.card-actions {
+    display: flex; flex-direction: column; 
+    justify-content: space-between; 
+    align-items: flex-end;
+    height: 85px; /* محاذاة مع ارتفاع الصورة */
+    padding-left: 2px;
+}
+
+.action-btn {
+    width: 36px; height: 36px; /* منطقة لمس أكبر */
+    background: var(--gray-bg); 
+    border-radius: 50%;
+    border: none; 
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; 
+    color: var(--black);
+    transition: var(--transition);
+}
+.action-btn:active { background: var(--black); color: var(--white); }
+
+.rating-badge { 
+    background: rgba(212, 175, 55, 0.1); 
+    color: #B08D26; 
+    padding: 4px 8px; 
+    border-radius: 6px;
+    font-size: 0.75rem; font-weight: 700;
+}
+
+/* --- Category Cards --- */
+.category-card {
+    background: var(--white);
+    padding: 18px 24px;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-card);
+    border-left: 4px solid var(--accent); /* لمسة جمالية إضافية */
+}
+
+/* --- Buttons --- */
+.btn-fab {
+    background: var(--black);
+    color: var(--accent);
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.btn-fab:active { transform: scale(0.9); }
+
+.btn-block {
+    width: 100%;
+    padding: 15px;
+    background: var(--black);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: var(--transition);
+}
+.btn-block:active { transform: translateY(2px); opacity: 0.9; }
+
+.btn-outline { 
+    background: transparent; 
+    border: 1px solid var(--gray-light); 
+    color: var(--black); 
+    padding: 8px 16px; 
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+/* --- Bottom Navigation --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    /* إضافة منطقة الأمان للأجهزة الحديثة */
+    padding-bottom: calc(10px + var(--safe-bottom));
+    border-top: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.03);
+    z-index: 900;
+}
+
+.nav-item {
+    display: flex; flex-direction: column; align-items: center;
+    text-decoration: none; color: #aaa;
+    font-size: 0.7rem; gap: 5px;
+    cursor: pointer;
+    padding: 5px 20px;
+    border-radius: 12px;
+    transition: var(--transition);
+}
+
+.nav-item i { font-size: 1.4rem; margin-bottom: 2px; transition: var(--transition); }
+.nav-item.active { color: var(--black); font-weight: 600; }
+.nav-item.active i { color: var(--accent); transform: translateY(-2px); }
+
+/* --- Modal (Bottom Sheet) --- */
+.modal {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 1000; backdrop-filter: blur(4px);
+    align-items: flex-end; /* يفتح من الأسفل في الموبايل */
+    opacity: 0; transition: opacity 0.3s;
+}
+.modal[style*="display: flex"] { opacity: 1; }
+
+.modal-content {
+    background: var(--bg-cream);
+    width: 100%;
+    height: auto;
+    max-height: 90vh;
+    border-radius: 24px 24px 0 0;
+    padding: 30px 25px calc(25px + var(--safe-bottom)) 25px;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: var(--shadow-soft);
+    animation: slideUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* --- Forms (UX Improved) --- */
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.85rem; color: #444; }
+
+.form-group input, .form-group textarea, .form-group select {
+    width: 100%; 
+    padding: 12px 15px; 
+    height: 48px; /* ارتفاع مريح للإصبع */
+    border: 1px solid #ddd;
+    border-radius: 10px; 
+    background: var(--white); 
+    font-family: inherit; font-size: 1rem;
+    transition: var(--transition);
+    appearance: none; /* إزالة ستايل المتصفح الافتراضي */
+}
+.form-group textarea { height: auto; padding-top: 15px; }
+
+.form-group input:focus, .form-group select:focus { 
+    border-color: var(--accent); 
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1); /* تأثير فوكس جميل */
+}
+
+/* --- Image Manager (محسن جداً) --- */
+.img-manager-container { 
+    display: flex; gap: 12px; 
+    overflow-x: auto; 
+    padding: 5px 5px 15px 5px;
+    scroll-snap-type: x mandatory; /* سلاسة في التمرير */
+}
+
+.img-preview-card { 
+    position: relative; 
+    width: 90px; height: 90px; /* تكبير قليلاً */
+    flex-shrink: 0; 
+    border-radius: 12px; 
+    overflow: hidden; 
+    border: 2px solid transparent; 
+    background: var(--white);
+    scroll-snap-align: start;
+    box-shadow: var(--shadow-card);
+}
+/* تمييز الغلاف */
+.img-preview-card[style*="border-color"] { 
+    box-shadow: 0 0 0 2px var(--accent); 
+    border-color: var(--white) !important;
+}
+
+.img-preview-card img { width: 100%; height: 100%; object-fit: cover; }
+
+/* أزرار الصور (أكبر لسهولة اللمس) */
+.btn-img-action {
+    position: absolute; width: 28px; height: 28px;
+    border-radius: 50%; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; color: white; z-index: 2;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.btn-delete { top: 4px; right: 4px; background: rgba(231, 76, 60, 0.95); }
+.btn-set-main { top: 4px; left: 4px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(2px); }
+
+.cover-badge {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: var(--accent); color: white;
+    font-size: 0.65rem; text-align: center; padding: 4px 0;
+    font-weight: 700; letter-spacing: 0.5px;
+}
+
+/* --- Color & Size Mapping --- */
+.mapping-row { 
+    display: flex; align-items: center; gap: 12px; 
+    background: var(--white); 
+    padding: 10px; 
+    border-radius: 10px; 
+    border: 1px solid #eee;
+    margin-bottom: 8px;
+}
+.color-preview { width: 32px; height: 32px; border-radius: 50%; border: 3px solid #f9f9f9; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.mapping-select { height: 40px; background: #fcfcfc; border-radius: 8px; border: 1px solid #e0e0e0; font-size: 0.9rem; }
+
+
+/* --- Desktop Responsive (Layout Change) --- */
+@media (min-width: 768px) {
+    body { 
+        padding-bottom: 0; 
+        display: flex; /* تحويل الـ body إلى فليكس للسايد بار */
+    }
+
+    /* تحويل الناف بار السفلي إلى سايد بار جانبي */
+    .bottom-nav {
+        position: sticky; top: 0;
+        width: 250px; height: 100vh;
+        flex-direction: column; justify-content: flex-start;
+        padding: 40px 20px;
+        background: var(--black); /* أسود فخم للديسكتوب */
+        border-right: none;
+        border-top: none;
+    }
+
+    .bottom-nav .nav-item {
+        flex-direction: row; justify-content: flex-start;
+        width: 100%; padding: 15px 20px;
+        color: #888; margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+    .bottom-nav .nav-item i { margin-left: 15px; font-size: 1.1rem; transform: none; }
+    .bottom-nav .nav-item.active { background: rgba(255,255,255,0.1); color: var(--white); }
+    .bottom-nav .nav-item.active i { transform: none; }
+
+    /* تعديل المحتوى الرئيسي */
+    main { 
+        flex: 1; 
+        padding: 40px; 
+        height: 100vh; 
+        overflow-y: auto; 
+    }
+
+    .mobile-header { display: none; } /* إخفاء هيدر الموبايل */
+    
+    .content-grid { 
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* شبكة متجاوبة */
+        gap: 20px;
+    }
+
+    .modal { align-items: center; justify-content: center; }
+    .modal-content { 
+        max-width: 650px; height: auto; max-height: 85vh; 
+        border-radius: 20px; 
+        padding: 40px;
+    }
+}
+/* =========================================
+   أكواد التبديل بين الأقسام (مهمة جداً)
+   ========================================= */
+
+/* الوضع الافتراضي: إخفاء القسم */
+.section-panel {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* عند التفعيل: إظهار القسم */
+.section-panel.active-section {
+    display: block;
+    opacity: 1;
+    animation: fadeInSection 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* تأثير ظهور ناعم */
+@keyframes fadeInSection {
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* الألوان المتفق عليها */
+:root {
+    --gold-earth: #A68942; /* الذهبي الترابي المخصص */
+    --black-deep: #1A1A1A; /* الأسود الفحمي */
+}
+
+.admin-header {
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    position: sticky; 
+    top: 0; 
+    z-index: 1000;
+    border-bottom: 1px solid #EEEEEE;
+}
+
+.admin-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    margin: 0;
+    color: var(--black-deep); /* كلمة Admin بالأسود */
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.admin-header h1 .brand-color {
+    color: var(--gold-earth); /* كلمة Velvet بالذهبي الترابي */
+    margin-right: 6px;
+}
+
+    

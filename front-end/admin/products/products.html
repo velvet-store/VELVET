@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إدارة المتجر | Luxury Admin</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="products.css">
+
+    <style>
+        /* ستايل إضافي لزر الحذف */
+        .btn-delete-product {
+            color: #dc3545; /* لون أحمر */
+            transition: 0.3s;
+            margin-right: 5px;
+        }
+        .btn-delete-product:hover {
+            background-color: #fee2e2; /* خلفية حمراء فاتحة جداً عند التمرير */
+            transform: scale(1.1);
+        }
+    </style>
+ 
+</head>
+<body>
+
+<header class="admin-header">
+    <h1>Admin <span class="brand-color">Velvet</span></h1>
+
+    <a href="../../admin/home-admin/home-admin.html" class="exit-btn">
+        <i class="fas fa-sign-out-alt"></i>
+    </a>
+</header>
+
+    <main style="margin-top: 10px;">
+        <section id="products-section" class="section-panel active-section">
+            <div class="search-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2 style="margin:0; font-size: 1.4rem;">المنتجات</h2>
+                    <button class="btn-fab" onclick="toggleAddSection(true)"><i class="fas fa-plus"></i></button>
+                </div>
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="productSearch" placeholder="بحث..." onkeyup="searchProducts()">
+                </div>
+            </div>
+            <div id="productsGrid" class="content-grid"></div>
+            <div style="height: 100px;"></div>
+        </section>
+
+        <section id="categories-section" class="section-panel">
+            <div class="search-container">
+                <h2 style="margin:0 0 20px 0; font-size: 1.4rem;">التصنيفات</h2>
+                <div style="background: var(--white); padding: 15px; border-radius: 12px; box-shadow: var(--shadow); display: flex; gap: 10px;">
+                    <input type="text" id="newCatName" placeholder="تصنيف جديد..." style="border:none; background: #f5f5f5; padding: 10px; border-radius: 8px; flex:1;">
+                    <button onclick="addCategory()" class="btn-block" style="width: auto; margin:0; padding: 0 20px;"><i class="fas fa-check"></i></button>
+                </div>
+            </div>
+            <div id="categoriesList" class="content-grid"></div>
+        </section>
+    </main>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('products', this)">
+            <i class="fas fa-box"></i> <span>المنتجات</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('categories', this)">
+            <i class="fas fa-layer-group"></i> <span>التصنيفات</span>
+        </div>
+    </nav>
+
+    <!-- === المودال الرئيسي === -->
+    <div id="universalModal" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 id="modalTitle" style="margin:0;">إضافة منتج</h2>
+                <button onclick="closeUniversalModal()" style="background: none; border: none; font-size: 1.5rem;"><i class="fas fa-times"></i></button>
+            </div>
+
+            <form id="productForm">
+                <input type="hidden" name="id" id="prodId">
+                <input type="hidden" name="action_type" id="actionType" value="add">
+
+                <div class="form-group">
+                    <label>اسم المنتج</label>
+                    <input type="text" name="name" id="prodName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>التصنيف</label>
+                    <select name="category" id="prodCategory" required></select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>السعر</label>
+                        <input type="number" name="price" id="prodPrice" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>التخفيض</label>
+                        <input type="number" name="discount_price" id="prodDiscount" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>التقييم</label>
+                        <input type="number" name="rating" id="prodRating" min="0" max="5" step="0.1" value="5">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>الصور (الحالية)</label>
+                    <p style="font-size:0.7rem; color:#999; margin-bottom:5px;">اضغط <i class="fas fa-star" style="color:#666;"></i> لتعيين الصورة كغلاف.</p>
+                    <!-- منطقة إدارة الصور المحسنة -->
+                    <div id="currentImagesManager" class="img-manager-container"></div>
+                    
+                    <label style="margin-top:10px;">إضافة صور جديدة</label>
+                    <input type="file" name="images" multiple accept="image/*">
+                </div>
+
+                <div class="form-group">
+                    <label>الوصف</label>
+                    <textarea name="description" id="prodDesc" rows="3"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>الألوان</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="color" id="colorPicker" style="height: 40px; width: 60px;">
+                        <button type="button" onclick="addTag('color')" class="btn-outline" style="padding: 0 15px;">+</button>
+                    </div>
+                    <div id="colorsContainer" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
+                    <input type="hidden" name="colors" id="colorsInput">
+                </div>
+                
+                <div class="form-group" id="imageMappingSection" style="display:none; border-top: 1px solid #eee; padding-top: 15px;">
+                    <label style="color: var(--accent);">ربط الألوان بالصور</label>
+                    <div id="mappingContainer"></div>
+                    <input type="hidden" name="image_map" id="imageMapInput">
+                </div>
+
+                <div class="form-group">
+                    <label>المقاسات</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                        <input type="text" id="sizeInput" placeholder="S, XL..." style="width: 80px;">
+                        <button type="button" onclick="addTag('size')" class="btn-outline" style="padding: 0 15px;">+</button>
+                    </div>
+                    <div id="sizesContainer" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
+                    <input type="hidden" name="sizes" id="sizesInput">
+                </div>
+
+                <button type="submit" class="btn-block" style="margin-top: 20px;">حفظ التغييرات</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let productsData = [], categoriesData = [];
+        let tempColors = [], tempSizes = [], tempImageMap = {}, tempImages = [];
+
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.section-panel').forEach(el => el.classList.remove('active-section'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName + '-section').classList.add('active-section');
+            if(element) element.classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCategories();
+            fetchProducts();
+            document.getElementById('productForm').addEventListener('submit', handleFormSubmit);
+        });
+
+        // --- Fetch Functions ---
+        async function fetchCategories() {
+            try {
+                const res = await fetch('/api/categories');
+                categoriesData = await res.json();
+                renderCategories();
+            } catch (err) { console.log('Error fetching categories'); }
+        }
+
+        function renderCategories() {
+            document.getElementById('categoriesList').innerHTML = categoriesData.map(c => `
+                <div class="category-card">
+                    <span class="cat-name">${c.name}</span>
+                    <button onclick="deleteCategory(${c.id})" style="color: #e74c3c; background:none; border:none;"><i class="fas fa-trash"></i></button>
+                </div>
+            `).join('');
+            document.getElementById('prodCategory').innerHTML = categoriesData.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+        }
+
+        async function fetchProducts() {
+            try {
+                const res = await fetch('/api/products');
+                productsData = await res.json();
+                renderProducts(productsData);
+            } catch (err) { console.log('Error fetching products'); }
+        }
+
+        function renderProducts(data) {
+            document.getElementById('productsGrid').innerHTML = data.map(p => `
+                <div class="product-card">
+                    <img src="${p.images[0] || ''}" class="card-img" onerror="this.src='https://via.placeholder.com/80'">
+                    <div class="card-info">
+                        <span class="card-cat">${p.category}</span>
+                        <div class="card-title">${p.name}</div>
+                        <div class="card-price">$${p.discount_price || p.price}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="action-btn" onclick="openEdit(${p.id})"><i class="fas fa-pen"></i></button>
+                        <!-- زر الحذف الجديد -->
+                        <button class="action-btn btn-delete-product" onclick="deleteProduct(${p.id})"><i class="fas fa-trash"></i></button>
+                        
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function searchProducts() {
+            const term = document.getElementById('productSearch').value.toLowerCase();
+            const filtered = productsData.filter(p => p.name.toLowerCase().includes(term));
+            renderProducts(filtered);
+        }
+
+        // --- دالة حذف المنتج الجديدة ---
+        async function deleteProduct(id) {
+            if(!confirm('هل أنت متأكد أنك تريد حذف هذا المنتج؟ سيتم حذف جميع البيانات والصور المرتبطة به.')) return;
+
+            try {
+                // استدعاء السيرفر لحذف المنتج (نفترض وجود ميثود DELETE على نفس مسار المنتج)
+                const res = await fetch(`/api/admin/product/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+
+                if(data.success) {
+                    // تحديث القائمة بعد الحذف الناجح
+                    fetchProducts();
+                } else {
+                    alert('فشل الحذف: ' + (data.message || 'خطأ غير معروف'));
+                }
+            } catch (err) {
+                console.error(err);
+                alert('حدث خطأ أثناء محاولة الحذف');
+            }
+        }
+
+        // --- Modal Logic ---
+        function toggleAddSection(isAdd) {
+            const modal = document.getElementById('universalModal');
+            modal.style.display = 'flex';
+            
+            tempColors = []; tempSizes = []; tempImageMap = {}; tempImages = [];
+            
+            if(isAdd) {
+                document.getElementById('modalTitle').innerText = "إضافة منتج";
+                document.getElementById('actionType').value = 'add';
+                document.getElementById('productForm').reset();
+                document.getElementById('currentImagesManager').innerHTML = '<span style="color:#999; font-size:0.8rem;">لا توجد صور حالية (الرفع عند الحفظ)</span>';
+                document.getElementById('prodRating').value = 5;
+            }
+            renderTagsUI();
+            renderImageMapUI();
+        }
+
+        function openEdit(id) {
+            toggleAddSection(false);
+            document.getElementById('modalTitle').innerText = "تعديل المنتج";
+            document.getElementById('actionType').value = 'edit';
+            
+            const p = productsData.find(x => x.id === id);
+            if(!p) return;
+
+            document.getElementById('prodId').value = p.id;
+            document.getElementById('prodName').value = p.name;
+            document.getElementById('prodCategory').value = p.category;
+            document.getElementById('prodPrice').value = p.price;
+            document.getElementById('prodDiscount').value = p.discount_price;
+            document.getElementById('prodDesc').value = p.description;
+            document.getElementById('prodRating').value = p.rating || 5;
+            
+            tempColors = p.colors || [];
+            tempSizes = p.sizes || [];
+            tempImages = p.images || [];
+            try { tempImageMap = typeof p.image_map === 'string' ? JSON.parse(p.image_map) : (p.image_map || {}); } catch(e) { tempImageMap = {}; }
+            
+            renderTagsUI();
+            renderCurrentImages(); // الدالة الجديدة لعرض الصور
+            renderImageMapUI();
+        }
+
+        // --- New: Image Manager Logic (Cover Selection) ---
+        function renderCurrentImages() {
+            const container = document.getElementById('currentImagesManager');
+            if(tempImages.length === 0) {
+                container.innerHTML = '<span style="color:#999; font-size:0.8rem;">لا توجد صور.</span>';
+                return;
+            }
+
+            container.innerHTML = tempImages.map((img, i) => {
+                const isMain = i === 0;
+                return `
+                <div class="img-preview-card" style="${isMain ? 'border-color: var(--accent);' : ''}">
+                    <img src="${img}">
+                    
+                    <button type="button" class="btn-img-action btn-delete" onclick="removeImg(${i})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    
+                    ${!isMain ? `
+                        <button type="button" class="btn-img-action btn-set-main" onclick="setAsMain(${i})" title="تعيين كغلاف">
+                            <i class="fas fa-star"></i>
+                        </button>
+                    ` : `
+                        <div class="cover-badge">الغلاف</div>
+                    `}
+                </div>
+                `;
+            }).join('');
+        }
+
+        window.removeImg = function(index) {
+            const removed = tempImages.splice(index, 1)[0];
+            for(let key in tempImageMap) { if(tempImageMap[key] === removed) delete tempImageMap[key]; }
+            renderCurrentImages();
+            renderImageMapUI();
+        }
+
+        window.setAsMain = function(index) {
+            // نقل الصورة المختارة إلى بداية المصفوفة
+            const img = tempImages.splice(index, 1)[0];
+            tempImages.unshift(img);
+            
+            renderCurrentImages(); // إعادة الرسم
+            renderImageMapUI(); // تحديث القوائم المنسدلة لأن الترتيب تغير (اختياري)
+        }
+
+        function closeUniversalModal() { document.getElementById('universalModal').style.display = 'none'; }
+
+        // --- Tags & Mapping Logic ---
+        function addTag(type) {
+            if(type === 'color') {
+                const val = document.getElementById('colorPicker').value;
+                if(!tempColors.includes(val)) tempColors.push(val);
+            } else {
+                const val = document.getElementById('sizeInput').value.toUpperCase();
+                if(val && !tempSizes.includes(val)) tempSizes.push(val);
+                document.getElementById('sizeInput').value = '';
+            }
+            renderTagsUI();
+            renderImageMapUI();
+        }
+
+        function removeTag(type, index) {
+            if(type === 'color') {
+                const removedColor = tempColors[index];
+                tempColors.splice(index, 1);
+                delete tempImageMap[removedColor];
+            } else {
+                tempSizes.splice(index, 1);
+            }
+            renderTagsUI();
+            renderImageMapUI();
+        }
+
+        function renderTagsUI() {
+            document.getElementById('colorsContainer').innerHTML = tempColors.map((c, i) => 
+                `<div style="width:25px; height:25px; background:${c}; border-radius:50%; border:1px solid #ddd; cursor:pointer;" onclick="removeTag('color', ${i})"></div>`
+            ).join('');
+            document.getElementById('colorsInput').value = JSON.stringify(tempColors);
+
+            document.getElementById('sizesContainer').innerHTML = tempSizes.map((s, i) => 
+                `<span style="background:#eee; padding:4px 8px; font-size:0.8rem; border-radius:4px; cursor:pointer;" onclick="removeTag('size', ${i})">${s} &times;</span>`
+            ).join('');
+            document.getElementById('sizesInput').value = JSON.stringify(tempSizes);
+        }
+
+        function renderImageMapUI() {
+            const container = document.getElementById('mappingContainer');
+            const section = document.getElementById('imageMappingSection');
+            
+            if (tempColors.length === 0 || tempImages.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            section.style.display = 'block';
+
+            const imageOptions = `<option value="">-- اختر صورة --</option>` + 
+                tempImages.map((img, idx) => `<option value="${img}">صورة ${idx + 1} ${idx === 0 ? '(الغلاف)' : ''}</option>`).join('');
+
+            container.innerHTML = tempColors.map(color => {
+                const selectedVal = tempImageMap[color] || '';
+                return `
+                <div class="mapping-row">
+                    <div class="color-preview" style="background-color: ${color};"></div>
+                    <select class="mapping-select" onchange="updateMap('${color}', this.value)">
+                        ${imageOptions}
+                    </select>
+                </div>
+                `;
+            }).join('');
+
+            const selects = container.querySelectorAll('select');
+            tempColors.forEach((color, idx) => {
+                if(tempImageMap[color]) selects[idx].value = tempImageMap[color];
+            });
+            
+            document.getElementById('imageMapInput').value = JSON.stringify(tempImageMap);
+        }
+
+        window.updateMap = function(color, imgUrl) {
+            if(imgUrl) tempImageMap[color] = imgUrl;
+            else delete tempImageMap[color];
+            document.getElementById('imageMapInput').value = JSON.stringify(tempImageMap);
+        }
+
+        // --- Submit ---
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const type = document.getElementById('actionType').value;
+            const id = document.getElementById('prodId').value;
+            
+            if(type === 'edit') {
+                // نرسل الصور بالترتيب الجديد
+                tempImages.forEach(img => formData.append('oldImages', img));
+            }
+
+            const url = type === 'add' ? '/api/admin/add-product' : `/api/admin/product/${id}`;
+            const method = type === 'add' ? 'POST' : 'PUT';
+
+            try {
+                const res = await fetch(url, { method: method, body: formData });
+                const data = await res.json();
+                if(data.success) { alert('تم الحفظ'); location.reload(); }
+                else alert(data.message);
+            } catch(err) { alert('خطأ في الاتصال'); }
+        }
+
+        async function addCategory() {
+            const name = document.getElementById('newCatName').value;
+            if(!name) return;
+            await fetch('/api/admin/categories', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({name}) });
+            document.getElementById('newCatName').value = ''; fetchCategories();
+        }
+
+        async function deleteCategory(id) {
+            if(confirm('حذف؟')) { await fetch(`/api/admin/categories/${id}`, { method: 'DELETE' }); fetchCategories(); }
+        }
+    </script>
+</body>
+</html>

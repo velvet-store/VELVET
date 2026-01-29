@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Velvet Admin | Dashboard</title>
+    
+    <!-- مكتبة أيقونات Remix (أكثر عصرية من FontAwesome) -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- الخطوط -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Palette */
+            --bg-body: #FDFBF7;       /* كريمي فاتح جداً */
+            --surface: #FFFFFF;       /* أبيض نقي */
+            --primary: #121212;       /* أسود فاخر */
+            --secondary: #666666;     /* رمادي للنصوص */
+            --accent: #C5A028;        /* ذهبي معدني */
+            --border: #F2F0EB;        /* لون الحدود */
+            
+            /* Spacing & Radius */
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --pad: 24px;
+            
+            /* Effects */
+            --shadow-sm: 0 4px 20px rgba(0,0,0,0.02);
+            --shadow-hover: 0 15px 40px rgba(197, 160, 40, 0.15);
+            --transition: cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Outfit', sans-serif;
+            color: var(--primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: var(--pad);
+            /* زخرفة خلفية ناعمة */
+            background-image: radial-gradient(circle at 100% 0%, #f3efe6 0%, transparent 40%);
+        }
+
+        /* --- Header Section --- */
+        header {
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            font-style: italic;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 300;
+            line-height: 1.2;
+        }
+
+        h1 span { font-weight: 700; display: block; }
+
+        .date-badge {
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: var(--secondary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* --- Grid Layout --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            flex: 1; /* يأخذ المساحة المتبقية */
+        }
+
+        /* --- Action Cards --- */
+        .action-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            text-decoration: none;
+            color: var(--primary);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        /* تأخير الانيميشن لكل كرت */
+        .action-card:nth-child(1) { animation-delay: 0.1s; }
+        .action-card:nth-child(2) { animation-delay: 0.2s; }
+
+        .card-content { z-index: 2; }
+
+        .card-icon {
+            width: 60px; height: 60px;
+            background: var(--bg-body);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            font-weight: 300;
+        }
+
+        .card-arrow {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--secondary);
+            transition: var(--transition);
+        }
+
+        /* --- Hover Effects --- */
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--accent);
+        }
+
+        .action-card:hover .card-icon {
+            background: var(--primary);
+            color: var(--accent);
+        }
+
+        .action-card:hover .card-arrow {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--surface);
+            transform: rotate(-45deg); /* حركة سهم أنيقة */
+        }
+
+        /* --- Footer --- */
+        footer {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.03);
+            animation: fadeIn 1s ease;
+        }
+
+        .logout-btn {
+            text-decoration: none;
+            color: var(--secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex; align-items: center; gap: 8px;
+            transition: 0.3s;
+        }
+        .logout-btn:hover { color: #e74c3c; }
+
+        .version {
+            font-size: 0.75rem;
+            color: #ccc;
+            font-family: monospace;
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- Desktop Tweak --- */
+        @media (min-width: 768px) {
+            body { max-width: 1000px; margin: 0 auto; justify-content: center; }
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+            .action-card { padding: 40px; flex-direction: column; align-items: flex-start; gap: 20px; }
+            .card-arrow { position: absolute; top: 30px; right: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <span class="brand">Velvet Admin</span>
+        <h1>Good Evening<br><span>Admin User</span></h1>
+        
+        <div class="date-badge">
+            <i class="ri-calendar-line"></i>
+            <span id="currentDate">loading...</span>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        
+        <!-- Products Card -->
+        <a href="../products/products.html" class="action-card">
+            <div class="card-content">
+                <div class="card-icon">
+                    <i class="ri-vip-diamond-line"></i>
+                </div>
+                <div class="card-title">Products</div>
+                <div class="card-desc">Manage inventory, prices & collections.</div>
+            </div>
+            <div class="card-arrow">
+                <i class="ri-arrow-right-line"></i>
+            </div>
+        </a>
+
+        <!-- Orders Card -->
+        <a href="../orders/orders.html" class="action-card">
+            <div class="card-content">
+                <div class="card-icon">
+                    <i class="ri-shopping-bag-3-line"></i>
+                </div>
+                <div class="card-title">Orders</div>
+                <div class="card-desc">Track shipments & customer requests.</div>
+            </div>
+            <div class="card-arrow">
+                <i class="ri-arrow-right-line"></i>
+            </div>
+        </a>
+
+    </div>
+
+ 
+
+    <script>
+        // سكربت بسيط لعرض التاريخ الحالي بشكل أنيق
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-US', dateOptions);
+    </script>
+
+</body>
+</html>

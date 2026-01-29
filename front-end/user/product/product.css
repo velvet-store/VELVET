@@ -1,0 +1,49 @@
+body { font-family: 'Segoe UI', sans-serif; background: #fff; margin: 0; color: #333; }
+header { background: #222; padding: 15px; margin-bottom: 20px; }
+
+.product-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+/* معرض الصور */
+.gallery { flex: 1; min-width: 300px; }
+#mainImage { width: 100%; border-radius: 10px; border: 1px solid #eee; object-fit: cover; }
+.thumbnails { display: flex; gap: 10px; margin-top: 10px; overflow-x: auto; }
+.thumbnails img { width: 60px; height: 60px; border-radius: 5px; cursor: pointer; border: 1px solid #ddd; object-fit: cover; }
+.thumbnails img:hover { border-color: #000; }
+
+/* التفاصيل */
+.details { flex: 1; min-width: 300px; }
+h1 { margin-top: 0; font-size: 2rem; }
+
+.price-box { font-size: 1.5rem; margin: 15px 0; }
+.current-price { color: #d0011b; font-weight: bold; }
+.old-price { color: #999; text-decoration: line-through; font-size: 1.1rem; margin-right: 10px; }
+.description { color: #666; line-height: 1.6; }
+
+/* خيارات (ألوان ومقاسات) */
+.option-group { margin-bottom: 20px; }
+.option-group label { display: block; font-weight: bold; margin-bottom: 8px; }
+
+.colors-wrapper { display: flex; gap: 10px; }
+.color-circle { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #ddd; cursor: pointer; }
+.color-circle.selected { border-color: #000; transform: scale(1.1); }
+
+.sizes-wrapper { display: flex; gap: 10px; flex-wrap: wrap; }
+.size-box { border: 1px solid #ddd; padding: 8px 15px; cursor: pointer; border-radius: 4px; }
+.size-box:hover { border-color: #999; }
+.size-box.selected { background: #000; color: white; border-color: #000; }
+
+/* الأزرار */
+.actions { display: flex; gap: 15px; margin-top: 30px; }
+.qty-input { width: 60px; padding: 10px; font-size: 1rem; text-align: center; border: 1px solid #ddd; border-radius: 5px; }
+.add-to-cart-btn { flex: 1; background: #28a745; color: white; border: none; padding: 12px; font-size: 1.1rem; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+.add-to-cart-btn:hover { background: #218838; }
+
+.filled { color: gold; }
+.rating-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }

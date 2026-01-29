@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VELVET | مركز المساعدة</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        :root {
+            --bg-body: #FAFAFA;       
+            --bg-card: #FFFFFF;
+            --glass: rgba(255, 255, 255, 0.95); 
+            --text-main: #1A1A1A;     
+            --text-light: #777777;    
+            --accent: #A68A64;        /* ذهبي ترابي */
+            --radius-lg: 16px;
+            --radius-pill: 50px;
+            --shadow-card: 0 10px 30px rgba(0,0,0,0.03); 
+            --shadow-float: 0 20px 40px rgba(166, 138, 100, 0.1); 
+            --font-main: 'Readex Pro', sans-serif;
+            --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* الهيدر */
+        header {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            padding: 15px 5%;
+            background: var(--glass);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .logo {
+            font-size: 1.5rem; font-weight: 700; letter-spacing: 1px;
+            color: var(--text-main); display: flex; align-items: center; gap: 8px;
+            cursor: pointer;
+        }
+        .logo i { color: var(--accent); font-size: 1.4rem; }
+
+        .nav-actions { display: flex; gap: 15px; align-items: center; }
+        .nav-btn {
+            width: 42px; height: 42px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-main); font-size: 1.25rem; cursor: pointer;
+            transition: var(--transition);
+        }
+        .nav-btn:hover { background: #F2F2F2; color: var(--accent); }
+
+        /* منطقة العنوان */
+        .help-hero {
+            margin-top: 90px; padding: 60px 20px 40px;
+            text-align: center;
+        }
+        .help-title { font-size: 2.5rem; font-weight: 300; margin-bottom: 10px; color: var(--text-main); }
+        .help-subtitle { color: var(--text-light); font-size: 1rem; max-width: 500px; margin: 0 auto; font-weight: 300; }
+
+        /* بطاقات الاختيار */
+        .selection-container {
+            display: flex; justify-content: center; gap: 30px;
+            margin-bottom: 50px; padding: 0 20px;
+            flex-wrap: wrap;
+        }
+
+        .select-card {
+            background: var(--bg-card);
+            width: 280px; padding: 30px;
+            border-radius: var(--radius-lg);
+            text-align: center; cursor: pointer;
+            box-shadow: var(--shadow-card);
+            border: 2px solid transparent;
+            transition: var(--transition);
+            opacity: 0.7; transform: scale(0.95);
+        }
+
+        .select-card.active {
+            border-color: var(--accent);
+            opacity: 1; transform: scale(1);
+            box-shadow: var(--shadow-float);
+        }
+
+        .select-icon {
+            font-size: 2.5rem; color: var(--text-light);
+            margin-bottom: 15px; display: block;
+            transition: var(--transition);
+        }
+        .select-card.active .select-icon { color: var(--accent); }
+        .select-title { font-size: 1.1rem; font-weight: 600; color: var(--text-main); }
+
+        /* نموذج التواصل */
+        .form-wrapper { max-width: 800px; margin: 0 auto 100px; padding: 0 20px; }
+
+        .luxury-form {
+            background: var(--bg-card);
+            padding: 40px; border-radius: 20px;
+            box-shadow: var(--shadow-card);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .luxury-form.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .form-header { margin-bottom: 30px; text-align: center; }
+        .form-header h3 { font-size: 1.5rem; font-weight: 500; margin-bottom: 8px; }
+        .form-header p { color: var(--text-light); font-size: 0.9rem; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: span 2; }
+
+        .input-group { position: relative; margin-bottom: 5px; }
+        
+        .input-field {
+            width: 100%; padding: 15px 20px;
+            background: #FAFAFA; border: 1px solid #EAEAEA;
+            border-radius: 12px; font-family: var(--font-main);
+            color: var(--text-main); font-size: 0.95rem;
+            transition: var(--transition);
+        }
+        
+        .input-field:focus {
+            background: #fff; border-color: var(--accent);
+            box-shadow: 0 4px 15px rgba(166, 138, 100, 0.05);
+        }
+
+        textarea.input-field { resize: vertical; min-height: 120px; }
+        label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: var(--text-main); font-weight: 500; }
+
+        .submit-btn {
+            width: 100%; padding: 16px;
+            background: var(--text-main); color: #fff;
+            border: none; border-radius: var(--radius-pill);
+            font-family: var(--font-main); font-size: 1rem; font-weight: 500;
+            cursor: pointer; transition: var(--transition);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .submit-btn:hover {
+            background: var(--accent); transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(166, 138, 100, 0.2);
+        }
+        .submit-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* نافذة التنبيه */
+        .toast-msg {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #1A1A1A; color: #fff; padding: 15px 30px;
+            border-radius: 50px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 2000; opacity: 0; pointer-events: none; transition: 0.3s;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .toast-msg.show { opacity: 1; bottom: 50px; }
+        .toast-msg.error { background: #d32f2f; }
+
+        @media(max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .selection-container { gap: 15px; }
+            .select-card { width: 45%; padding: 20px; }
+            .select-icon { font-size: 2rem; }
+            .select-title { font-size: 0.9rem; }
+            .luxury-form { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.location.href='../home-store/home-store.html'">
+            <i class="ri-vip-diamond-line"></i> VELVET
+        </div>
+        <div class="nav-actions">
+            <div class="nav-btn" onclick="window.location.href='../home-store/home-store.html'">
+                <i class="ri-home-5-line"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="help-hero">
+        <h1 class="help-title">نحن هنا لخدمتك</h1>
+        <p class="help-subtitle">فريق VELVET جاهز لاستقبال طلبك وحله فوراً.</p>
+    </div>
+
+    <div class="selection-container">
+        <div class="select-card active" onclick="switchForm('tech')">
+            <i class="ri-computer-line select-icon"></i>
+            <div class="select-title">مشكلة تقنية في الموقع</div>
+        </div>
+        <div class="select-card" onclick="switchForm('product')">
+            <i class="ri-shopping-bag-3-line select-icon"></i>
+            <div class="select-title">مشكلة في الطلب أو المنتج</div>
+        </div>
+    </div>
+
+    <div class="form-wrapper">
+        <form class="luxury-form active" id="techForm" onsubmit="handleFormSubmit(event, 'tech')">
+            <div class="form-header">
+                <h3>الدعم الفني</h3>
+                <p>صادف خطأ في التصفح ؟ أخبرنا بالتفاصيل.</p>
+            </div>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" id="techName" class="input-field" placeholder="الاسم هنا..." required>
+                </div>
+                <div class="input-group">
+                    <label>رقم الهاتف</label>
+                    <input type="tel" id="techPhone" class="input-field" placeholder="055..." required>
+                </div>
+                <div class="input-group full-width">
+                    <label>نوع الجهاز المستخدم</label>
+                    <select id="techDevice" class="input-field">
+                        <option>هاتف محمول (أندرويد/آيفون)</option>
+                        <option>جهاز كمبيوتر / لابتوب</option>
+                        <option>جهاز لوحي (تابلت)</option>
+                    </select>
+                </div>
+                <div class="input-group full-width">
+                    <label>وصف المشكلة</label>
+                    <textarea id="techDesc" class="input-field" placeholder="يرجى وصف المشكلة..." required></textarea>
+                </div>
+            </div>
+            <button type="submit" class="submit-btn" id="btn-tech">
+                <span>إرسال</span>
+                <i class="ri-send-plane-fill"></i>
+            </button>
+        </form>
+
+        <form class="luxury-form" id="productForm" onsubmit="handleFormSubmit(event, 'product')">
+            <div class="form-header">
+                <h3>خدمة ما بعد البيع</h3>
+                <p>استبدال، استرجاع، أو استفسار عن حالة الطلب.</p>
+            </div>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>رقم الطلب (إن وجد)</label>
+                    <input type="text" id="prodOrder" class="input-field" placeholder="#12345">
+                </div>
+                <div class="input-group">
+                    <label>رقم الهاتف</label>
+                    <input type="tel" id="prodPhone" class="input-field" placeholder="055..." required>
+                </div>
+                <div class="input-group full-width">
+                    <label>نوع الطلب</label>
+                    <select id="prodType" class="input-field">
+                        <option>وصلني منتج خاطئ</option>
+                        <option>المنتج تالف أو به عيوب</option>
+                        <option>تأخر الطلب عن الموعد</option>
+                        <option>طلب استرجاع / استبدال</option>
+                    </select>
+                </div>
+                <div class="input-group full-width">
+                    <label>التفاصيل</label>
+                    <textarea id="prodDetails" class="input-field" placeholder="اكتب التفاصيل هنا..." required></textarea>
+                </div>
+            </div>
+            <button type="submit" class="submit-btn" id="btn-prod">
+                <span>إرسال</span>
+                <i class="ri-mail-send-fill"></i>
+            </button>
+        </form>
+    </div>
+
+    <div id="toast" class="toast-msg">
+        <i class="ri-checkbox-circle-fill" style="color: #4CAF50; font-size: 1.2rem;"></i>
+        <span id="toastText">تم الإرسال بنجاح!</span>
+    </div>
+
+
+
+
+<script>
+    // 1. تفعيل EmailJS باستخدام المفتاح العام الخاص بك
+    (function() {
+        emailjs.init("3d9Dn0Go7sbMsOnNP"); 
+    })();
+
+    // إعدادات تلجرام (المبرمج)
+    const TG_TOKEN = "8220149286:AAEBTEtV9LZ_EhqRMnplJDnbMISzHtNKPS4";
+    const CHAT_ID = "7327544231";
+    
+    // إعدادات EmailJS (خدمة العملاء)
+    const SERVICE_ID = "service_hgoi3ae";
+    const TEMPLATE_ID = "template_wuu9enp"; // !!! استبدل هذا المعرف من حسابك في EmailJS !!!
+
+    function switchForm(type) {
+        document.querySelectorAll('.luxury-form').forEach(f => f.classList.remove('active'));
+        document.querySelectorAll('.select-card').forEach(c => c.classList.remove('active'));
+
+        if(type === 'tech') {
+            document.getElementById('techForm').classList.add('active');
+            document.querySelectorAll('.select-card')[0].classList.add('active');
+        } else {
+            document.getElementById('productForm').classList.add('active');
+            document.querySelectorAll('.select-card')[1].classList.add('active');
+        }
+    }
+
+    async function handleFormSubmit(e, type) {
+        e.preventDefault();
+        const btnId = type === 'tech' ? 'btn-tech' : 'btn-prod';
+        const btn = document.getElementById(btnId);
+        const originalText = btn.innerHTML;
+        
+        btn.disabled = true;
+        btn.innerHTML = '<span>جاري الإرسال...</span>';
+
+        try {
+            if (type === 'tech') {
+                // إرسال بلاغ تقني إلى تلجرام
+                const message = `  *🛠 بلاغ مشكلة تقنية (VELVET)*\n\nالاسم: ${document.getElementById('techName').value}\n الهاتف: ${document.getElementById('techPhone').value}\nالجهاز: ${document.getElementById('techDevice').value}\nالوصف: ${document.getElementById('techDesc').value}`;
+                
+                await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' })
+                });
+                showToast("تم إرسال بلاغك التقني بنجاح!", false);
+            } else {
+                // إرسال شكوى منتج إلى الإيميل عبر EmailJS
+                const params = {
+                    order_id: document.getElementById('prodOrder').value || "غير محدد",
+                    user_phone: document.getElementById('prodPhone').value,
+                    issue_type: document.getElementById('prodType').value,
+                    details: document.getElementById('prodDetails').value
+                };
+
+                await emailjs.send(SERVICE_ID, TEMPLATE_ID, params);
+                showToast("تم تلقي طلبك سيتم الاتصال بك في اقرب وقت", false);
+            }
+            e.target.reset();
+        } catch (error) {
+            console.error("Error:", error);
+            showToast("حدث خطأ في الإرسال، يرجى المحاولة لاحقاً.", true);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }
+
+    function showToast(msg, isError) {
+        const toast = document.getElementById('toast');
+        const toastText = document.getElementById('toastText');
+        toastText.innerText = msg;
+        toast.className = isError ? 'toast-msg error show' : 'toast-msg show';
+        setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+</script>
+
+
+
+</body>
+</html>

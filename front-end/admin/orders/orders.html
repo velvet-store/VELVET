@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إدارة الطلبات | Velvet</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg: #F9F7F2;
+            --surface: #FFFFFF;
+            --primary: #1A1A1A;
+            --gold: #C5A028;
+            --text-gray: #888888;
+            --border: #ECECEC;
+            
+            --status-pending: #E67E22;
+            --status-confirmed: #2980B9;
+            --status-shipped: #8E44AD;
+            --status-delivered: #27AE60;
+            --status-cancelled: #C0392B;
+            
+            --shadow: 0 4px 15px rgba(0,0,0,0.03);
+            --radius: 14px;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background-color: var(--bg); 
+            margin: 0; padding: 0; 
+            color: var(--primary);
+            overflow-x: hidden;
+            padding-bottom: 40px;
+        }
+
+        .num-en {
+            font-family: sans-serif; direction: ltr; unicode-bidi: embed; display: inline-block;
+        }
+
+        .color-preview-circle {
+            width: 18px; height: 18px; border-radius: 50%; display: inline-block; 
+            vertical-align: middle; border: 1px solid #ddd; margin-left: 5px;
+        }
+
+        /* --- الهيدر --- */
+        .admin-header {
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.98);
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 102;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .admin-header h1 {
+            font-family: 'Playfair Display', serif; font-size: 1.4rem; margin: 0; letter-spacing: 0.5px;
+        }
+
+        .refresh-btn {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: #fff; border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        /* --- شريط البحث (جديد) --- */
+        .search-container {
+            padding: 10px 20px;
+            background: var(--surface);
+            position: sticky; top: 67px; z-index: 101; /* أسفل الهيدر مباشرة */
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border-radius: 50px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 0.9rem;
+            color: var(--primary);
+            transition: 0.3s;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(197, 160, 40, 0.1);
+            background: #fff;
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-gray);
+        }
+
+        /* --- التبويبات --- */
+        .tabs-wrapper {
+            background: var(--surface);
+            padding: 12px 0;
+            position: sticky; top: 128px; z-index: 100; /* أسفل البحث */
+            overflow-x: auto; display: flex; gap: 8px;
+            padding-inline: 20px;
+            scrollbar-width: none;
+            border-bottom: 1px solid var(--border);
+        }
+        .tabs-wrapper::-webkit-scrollbar { display: none; }
+
+        .tab-item {
+            flex: 0 0 auto;
+            padding: 8px 18px; border-radius: 50px;
+            background: var(--bg); color: var(--text-gray);
+            font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .tab-item.active {
+            background: var(--primary); color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.25);
+            padding: 1px 7px; border-radius: 10px; font-size: 0.75rem;
+        }
+
+        /* --- التبويبات الفرعية --- */
+        .sub-tabs-container {
+            display: none; justify-content: center; padding: 15px 20px 5px; gap: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+        .sub-tabs-container.show { display: flex; }
+
+        .sub-tab {
+            flex: 1; max-width: 200px; padding: 10px; text-align: center;
+            background: #fff; border: 1px solid var(--border);
+            border-radius: 10px; cursor: pointer;
+            font-size: 0.85rem; font-weight: 600; color: var(--text-gray); transition: 0.3s;
+        }
+        
+        .sub-tab.active {
+            background: var(--primary); color: #fff; border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- الشبكة --- */
+        .orders-grid {
+            padding: 20px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 12px;
+            max-width: 800px; margin: 0 auto;
+        }
+
+        /* --- تصميم الكرت --- */
+        .order-card {
+            background: var(--surface); border-radius: var(--radius);
+            padding: 12px; box-shadow: var(--shadow);
+            display: flex; align-items: center; gap: 15px;
+            border: 1px solid var(--border); cursor: pointer; transition: transform 0.2s;
+        }
+        .order-card:active { transform: scale(0.98); background-color: #fafafa; }
+
+        .thumb {
+            width: 60px; height: 60px; border-radius: 12px; object-fit: cover;
+            background: #f0f0f0; border: 1px solid #f0f0f0; flex-shrink: 0;
+        }
+
+        .card-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .customer-name { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+        .customer-phone { font-size: 0.85rem; color: var(--text-gray); font-family: sans-serif; display: flex; align-items: center; gap: 5px; }
+        .card-arrow { color: #ddd; font-size: 0.9rem; }
+
+        /* --- التفاصيل (Bottom Sheet) --- */
+        .sheet-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            z-index: 1000; display: none; opacity: 0; transition: 0.3s; backdrop-filter: blur(3px);
+        }
+        
+        .bottom-sheet {
+            position: fixed; bottom: -100%; left: 0; right: 0;
+            background: var(--surface); border-radius: 24px 24px 0 0;
+            padding: 30px 24px; z-index: 1001;
+            transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+        }
+
+        .sheet-active .sheet-overlay { display: block; opacity: 1; }
+        .sheet-active .bottom-sheet { bottom: 0; }
+
+        .sheet-handle { width: 50px; height: 5px; background: #eee; border-radius: 10px; margin: -10px auto 20px; }
+
+        .sheet-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;
+        }
+        .order-id { font-family: 'Playfair Display'; font-size: 1.2rem; font-weight: 700; }
+        .order-price { font-size: 1.1rem; font-weight: 800; color: var(--gold); }
+
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.9rem; align-items: center;}
+        .lbl { color: var(--text-gray); }
+        .val { font-weight: 600; text-align: left; }
+
+        .status-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
+        .action-btn {
+            padding: 14px; border-radius: 12px; border: none; font-family: inherit;
+            font-weight: 700; cursor: pointer; color: white; display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        
+        .btn-confirm { background: var(--primary); grid-column: 1 / -1; }
+        .btn-ship { background: var(--status-shipped); }
+        .btn-deliver { background: var(--status-delivered); }
+        .btn-cancel { background: transparent; border: 1px solid var(--status-cancelled); color: var(--status-cancelled); }
+
+        @media (min-width: 768px) {
+            .bottom-sheet { width: 450px; left: 50%; bottom: auto; top: 50%; transform: translate(-50%, -40%); border-radius: 20px; opacity: 0; pointer-events: none; }
+            .sheet-active .bottom-sheet { transform: translate(-50%, -50%); opacity: 1; pointer-events: all; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="admin-header">
+        <h1>Velvet <span style="color:var(--gold)">Admin</span></h1>
+        <div class="refresh-btn" onclick="fetchOrders()">
+            <i class="fas fa-sync-alt"></i>
+        </div>
+    </header>
+
+    <!-- شريط البحث (جديد) -->
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="بحث بالاسم أو رقم الهاتف..." onkeyup="handleSearch(this.value)">
+        </div>
+    </div>
+
+    <div class="tabs-wrapper">
+        <div class="tab-item active" onclick="filterBy('pending', this)">
+            <i class="fas fa-clock"></i> انتظار <span class="badge num-en" id="c-pending">0</span>
+        </div>
+        <div class="tab-item" onclick="filterBy('processing', this)">
+            <i class="fas fa-box-open"></i> التجهيز والشحن <span class="badge num-en" id="c-processing">0</span>
+        </div>
+        <div class="tab-item" onclick="filterBy('delivered', this)">
+            <i class="fas fa-check-circle"></i> مكتمل <span class="badge num-en" id="c-delivered">0</span>
+        </div>
+        <div class="tab-item" onclick="filterBy('cancelled', this)">
+            <i class="fas fa-ban"></i> ملغي <span class="badge num-en" id="c-cancelled">0</span>
+        </div>
+    </div>
+
+    <!-- التبويبات الفرعية -->
+    <div id="subTabs" class="sub-tabs-container">
+        <div class="sub-tab active" onclick="filterSub('confirmed', this)">
+            <i class="fas fa-clipboard-check"></i> جاري التجهيز (<span class="num-en" id="c-confirmed">0</span>)
+        </div>
+        <div class="sub-tab" onclick="filterSub('shipped', this)">
+            <i class="fas fa-shipping-fast"></i> تم الشحن (<span class="num-en" id="c-shipped">0</span>)
+        </div>
+    </div>
+
+    <!-- شبكة الطلبات -->
+    <main id="ordersContainer" class="orders-grid">
+        <!-- سيتم ملؤها بالجافاسكربت -->
+    </main>
+
+    <!-- تفاصيل الطلب -->
+    <div id="overlay" class="sheet-overlay" onclick="closeSheet()"></div>
+    <div id="bottomSheet" class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <div id="sheetContent"></div>
+    </div>
+
+    <script>
+        let allOrders = [];
+        let currentFilter = 'pending';
+        let currentSubFilter = 'confirmed';
+        let searchTerm = '';
+
+        async function fetchOrders() {
+            document.getElementById('ordersContainer').innerHTML = `<div style="text-align:center; width:100%; padding:40px; color:#ccc;"><i class="fas fa-circle-notch fa-spin fa-2x"></i></div>`;
+            try {
+                const res = await fetch('/api/admin/orders');
+                if(res.ok) {
+                    allOrders = await res.json();
+                    updateCounts();
+                    render();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function updateCounts() {
+            const counts = { 
+                pending: 0, confirmed: 0, shipped: 0, processing: 0, delivered: 0, cancelled: 0 
+            };
+            allOrders.forEach(o => {
+                const s = o.status;
+                if(counts[s] !== undefined) counts[s]++;
+                if(s === 'confirmed' || s === 'shipped') counts.processing++;
+            });
+            for(let key in counts) {
+                const el = document.getElementById(`c-${key}`);
+                if(el) el.innerText = counts[key];
+            }
+        }
+
+        function filterBy(status, el) {
+            currentFilter = status;
+            document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+
+            const subTabs = document.getElementById('subTabs');
+            if (status === 'processing') {
+                subTabs.classList.add('show');
+                currentSubFilter = 'confirmed';
+                document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+                document.querySelector('.sub-tab:first-child').classList.add('active');
+            } else {
+                subTabs.classList.remove('show');
+            }
+            render();
+        }
+
+        function filterSub(subStatus, el) {
+            currentSubFilter = subStatus;
+            document.querySelectorAll('.sub-tab').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            render();
+        }
+
+        function handleSearch(val) {
+            searchTerm = val.toLowerCase();
+            render();
+        }
+
+        function render() {
+            const container = document.getElementById('ordersContainer');
+            
+            const filtered = allOrders.filter(o => {
+                // 1. تصفية حسب الحالة (Tab Filter)
+                let statusMatch = false;
+                if (currentFilter === 'pending' && o.status === 'pending') statusMatch = true;
+                else if (currentFilter === 'delivered' && o.status === 'delivered') statusMatch = true;
+                else if (currentFilter === 'cancelled' && o.status === 'cancelled') statusMatch = true;
+                else if (currentFilter === 'processing') {
+                    if (currentSubFilter === 'confirmed' && o.status === 'confirmed') statusMatch = true;
+                    if (currentSubFilter === 'shipped' && o.status === 'shipped') statusMatch = true;
+                }
+
+                if (!statusMatch) return false;
+
+                // 2. تصفية حسب البحث (Search Filter)
+                if (searchTerm === '') return true;
+                
+                const name = o.customer_name ? o.customer_name.toLowerCase() : '';
+                const phone = o.customer_phone ? o.customer_phone.toString() : '';
+                
+                return name.includes(searchTerm) || phone.includes(searchTerm);
+            });
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<p style="text-align:center; color:#999; width:100%; margin-top:50px;">لا توجد طلبات</p>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(o => `
+                <div class="order-card" onclick="openDetails(${o.id})">
+                    <img src="${o.product_image || 'https://via.placeholder.com/60'}" class="thumb">
+                    <div class="card-info">
+                        <div class="customer-name">${o.customer_name}</div>
+                        <div class="customer-phone num-en">${o.customer_phone}</div>
+                    </div>
+                    <i class="fas fa-chevron-left card-arrow"></i>
+                </div>
+            `).join('');
+        }
+
+        function openDetails(id) {
+            const o = allOrders.find(x => x.id === id);
+            
+            let actions = '';
+            if(o.status === 'pending') {
+                actions = `<button class="action-btn btn-confirm" onclick="setStatus(${o.id}, 'confirmed')"><i class="fas fa-check"></i> تأكيد الطلب</button>
+                           <button class="action-btn btn-cancel" onclick="setStatus(${o.id}, 'cancelled')">إلغاء</button>`;
+            } else if(o.status === 'confirmed') {
+                actions = `<button class="action-btn btn-ship" style="grid-column:1/-1" onclick="setStatus(${o.id}, 'shipped')"><i class="fas fa-truck"></i> إرسال للشحن</button>
+                           <button class="action-btn btn-cancel" style="grid-column:1/-1" onclick="setStatus(${o.id}, 'cancelled')">إلغاء</button>`;
+            } else if(o.status === 'shipped') {
+                actions = `<button class="action-btn btn-deliver" style="grid-column:1/-1" onclick="setStatus(${o.id}, 'delivered')"><i class="fas fa-hand-holding-usd"></i> تم التسليم</button>
+                           <button class="action-btn btn-cancel" style="grid-column:1/-1" onclick="setStatus(${o.id}, 'cancelled')">مرتجع</button>`;
+            }
+
+            let colorDisplay = o.selected_color || '-';
+            if (o.selected_color && o.selected_color !== '-') {
+                colorDisplay = `<span class="color-preview-circle" style="background-color:${o.selected_color}"></span>`;
+            }
+
+            const html = `
+                <div class="sheet-header">
+                    <div>
+                        <div class="order-id">طلب #<span class="num-en">${o.id}</span></div>
+                        <div style="font-size:0.8rem; color:#888" class="num-en">${new Date(o.created_at).toLocaleDateString('en-GB')}</div>
+                    </div>
+                    <div class="order-price num-en">${o.total_price} DA</div>
+                </div>
+
+                <div class="detail-row">
+                    <span class="lbl">المنتج</span>
+                    <span class="val">${o.product_name}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="lbl">اللون</span>
+                    <span class="val">${colorDisplay}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="lbl">المقاس</span>
+                    <span class="val">${o.selected_size || '-'}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="lbl">الكمية</span>
+                    <span class="val num-en">${o.quantity}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="lbl">العميل</span>
+                    <span class="val">${o.customer_name}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="lbl">رقم الهاتف</span>
+                    <span class="val num-en">${o.customer_phone}</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="lbl">العنوان</span>
+                    <span class="val">${o.city} - ${o.address_details}</span>
+                </div>
+
+                <div class="status-actions">
+                    ${actions}
+                </div>
+
+                ${(o.status === 'cancelled' || o.status === 'delivered') ? 
+                  `<div style="margin-top:20px; text-align:center;">
+                     <button onclick="deleteOrder(${o.id})" style="color:red; background:none; border:none; font-weight:bold; cursor:pointer;">حذف الطلب</button>
+                   </div>` : ''}
+            `;
+
+            document.getElementById('sheetContent').innerHTML = html;
+            document.body.classList.add('sheet-active');
+        }
+
+        function closeSheet() { document.body.classList.remove('sheet-active'); }
+
+        async function setStatus(id, status) {
+            if(!confirm('تأكيد الإجراء؟')) return;
+            try {
+                const res = await fetch(`/api/admin/orders/${id}/status`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ status })
+                });
+                if(res.ok) { closeSheet(); fetchOrders(); }
+            } catch(e) {}
+        }
+
+        async function deleteOrder(id) {
+            if(!confirm('حذف نهائي؟')) return;
+            await fetch(`/api/admin/orders/${id}`, { method: 'DELETE' });
+            closeSheet(); fetchOrders();
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchOrders);
+    </script>
+</body>
+</html>

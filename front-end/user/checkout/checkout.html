@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تأكيد الطلب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     <style>
+
+            
+        :root {
+            --black: #1a1a1a;
+            --gold: #c5a028;
+            --gold-light: #fffbf2;
+            --white: #ffffff;
+            --bg-page: #f9f9f9;
+            --input-bg: #f5f5f5;
+            --text-gray: #888888;
+            
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            
+            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.06);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * { box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background: var(--bg-page); 
+            margin: 0; 
+            padding: 20px 15px; 
+            color: var(--black);
+            line-height: 1.5;
+        }
+        
+        .container { 
+            max-width: 480px; 
+            margin: 0 auto; 
+            background: var(--white); 
+            padding: 40px 25px; 
+            border-radius: var(--radius-lg); 
+            box-shadow: var(--shadow-soft);
+            border-top: 3px solid var(--gold);
+        }
+
+        h2 { 
+            text-align: center; color: var(--black); margin: 0 0 35px; 
+            font-size: 1.5em; font-weight: 800; 
+        }
+
+        /* تنسيق الصناديق */
+        .box { margin-bottom: 30px; }
+        
+        .box-title {
+            font-size: 0.95em; font-weight: 700; color: var(--black);
+            margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
+        }
+        .box-title i { color: var(--gold); font-size: 1em; }
+
+        /* الشبكة */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        /* --- تنسيق الحقول الحديث (أيقونات داخلية) --- */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 0;
+        }
+
+        .field-icon {
+            position: absolute;
+            top: 50%;
+            right: 18px;
+            transform: translateY(-50%);
+            color: #b0b0b0;
+            font-size: 1em;
+            transition: var(--transition);
+            pointer-events: none;
+            z-index: 2;
+        }
+        .field-icon.textarea-icon { top: 20px; transform: none; }
+
+        .label-text { 
+            display: block; font-size: 0.85em; color: var(--text-gray); 
+            margin-bottom: 8px; font-weight: 500; 
+        }
+        
+        input, select, textarea {
+            width: 100%; 
+            background: var(--input-bg);
+            border: 1px solid transparent;
+            border-radius: var(--radius-md);
+            font-family: inherit; font-size: 0.95em; color: var(--black); 
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 16px 50px 16px 15px; 
+            height: 54px;
+        }
+        textarea { height: auto; min-height: 110px; resize: none; padding-top: 16px; }
+        
+        input:focus, select:focus, textarea:focus {
+            background: var(--white);
+            border-color: var(--gold);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        .input-wrapper:focus-within .field-icon { color: var(--gold); }
+        input::placeholder, textarea::placeholder { color: #ccc; font-weight: 400; }
+
+        /* --- تنسيق شريط الألوان (Scroll) --- */
+        /* استعادة التصميم القابل للسحب بدون أيقونات */
+        .color-scroll-container {
+            display: flex; 
+            flex-wrap: nowrap; /* إجبار العناصر على البقاء في سطر واحد */
+            gap: 10px; 
+            overflow-x: auto; /* تفعيل السحب */
+            padding: 10px 5px; /* مساحة للظل */
+            margin: 0 -5px; /* توسيع بسيط للجوانب */
+            width: 100%;
+            
+            /* إخفاء شريط التمرير وجعل الحركة ناعمة */
+            scrollbar-width: none; 
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .color-scroll-container::-webkit-scrollbar { display: none; }
+
+        .color-item-wrapper { 
+            flex: 0 0 auto; /* منع الانكماش */
+            width: 50px; /* عرض ثابت ليظهر جزء من العنصر التالي */
+            display: flex; justify-content: center; 
+        }
+
+        .color-circle {
+            width: 44px; height: 44px; 
+            border-radius: 50%; 
+            cursor: pointer; 
+            display: block;
+            position: relative;
+            /* الظل الطفيف */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 2px solid var(--white); 
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .color-radio { display: none; }
+        
+        /* حالة الاختيار - تكبير + حدود ذهبية فقط (بدون أيقونة) */
+        .color-radio:checked + .color-circle {
+            transform: scale(1.2); /* تكبير واضح */
+            box-shadow: 0 0 0 2px var(--gold), 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 2;
+            border-color: var(--white);
+        }
+
+        /* ملخص السعر */
+        .total-box {
+            background: var(--gold-light); 
+            border-radius: var(--radius-md); 
+            padding: 20px 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 20px;
+            border: 1px solid rgba(197, 160, 40, 0.1);
+        }
+
+        .qty-wrapper {
+            display: flex; align-items: center; background: var(--white);
+            border-radius: 8px; padding: 6px 12px;
+        }
+        #qtyInput {
+            border: none; background: transparent; height: 25px; width: 40px; 
+            text-align: center; font-weight: bold; padding: 0; margin: 0;
+            font-size: 1.1em;
+        }
+
+        .price-text { color: var(--black); font-weight: 800; font-size: 1.5em; }
+        .currency { font-size: 0.8em; color: var(--gold); margin-right: 5px; font-weight: 700; letter-spacing: 0.5px;}
+        
+        /* زر التأكيد */
+        .btn-submit {
+            width: 100%; padding: 18px; margin-top: 25px;
+            background: var(--black); color: var(--gold); 
+            border: none; border-radius: var(--radius-md);
+            font-size: 1em; font-weight: 700; cursor: pointer;
+            transition: var(--transition);
+            display: flex; justify-content: center; align-items: center; gap: 12px;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+
+        .security-footer {
+            text-align: center; margin-top: 20px; 
+            font-size: 0.8em; color: #aaa; 
+            display: flex; justify-content: center; gap: 20px;
+        }
+        .success-overlay { text-align:center; padding: 30px 10px; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+
+    
+     </style>
+
+</head>
+<body>
+
+    <div class="container">
+        <h2>إتمام الطلب</h2>
+        <form id="orderForm">
+
+            <!-- 1. المنتج -->
+            <div class="box">
+                <div class="box-title">
+                    <i class="fa-solid fa-layer-group"></i> <span>مواصفات المنتج</span>
+                </div>
+                
+                <div style="margin-bottom: 25px; text-align: center;">
+                    <span id="prodName" style="font-weight: 700; font-size: 1.1em; color: var(--black);">جاري التحميل...</span>
+                </div>
+
+                <div class="grid-2">
+                    <div style="min-width: 0;">
+                        <label class="label-text">اللون المتاح</label>
+                        <div id="colorsArea"></div>
+                        <input type="hidden" name="color" id="finalColor">
+                    </div>
+
+                    <div>
+                        <label class="label-text">المقاس</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-expand field-icon"></i>
+                            <select name="size" id="sizeSelect" required>
+                                <option value="">تحديد</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. البيانات -->
+            <div class="box">
+                <div class="box-title">
+                    <i class="fa-solid fa-address-card"></i> <span>بيانات التوصيل</span>
+                </div>
+                
+                <div class="grid-2" style="margin-bottom: 15px;">
+                    <div>
+                        <label class="label-text">الاسم واللقب</label>
+                        <div class="input-wrapper">
+                            <i class="fa-regular fa-user field-icon"></i>
+                            <input type="text" name="customer_name" required placeholder="الاسم الكامل">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="label-text">رقم الهاتف</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-mobile-screen field-icon"></i>
+                            <input type="tel" name="customer_phone" required placeholder="05XXXXXXXX" pattern="[0-9]*" inputmode="numeric">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label class="label-text">العنوان الكامل</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-map-location-dot field-icon textarea-icon"></i>
+                        <textarea name="address_details" required placeholder="مثال: ولاية الجزائر، باب الزوار، حي 5 جويلية، عمارة 12، مسكن رقم 4"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. الملخص -->
+            <div class="total-box">
+                <div class="qty-wrapper">
+                    <span style="font-size:0.8em; color:#888; margin-left:8px;">الكمية:</span>
+                    <input type="number" name="quantity" id="qtyInput" value="1" min="1" max="10" onkeyup="calc()" onchange="calc()">
+                </div>
+                
+                <div style="text-align:left;">
+                    <div id="priceWrap">
+                        <span id="oldPrice" style="text-decoration: line-through; color: #ccc; font-size: 0.9em; display:none"></span>
+                        <span id="finalPrice" class="price-text">0</span>
+                        <span class="currency">DA</span>
+                    </div>
+                    <small style="font-size:0.75em; color:#999; display:block; margin-top:2px;">الدفع عند الإستلام</small>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnSubmit">
+                تأكيد الطلب
+            </button>
+
+            <div class="security-footer">
+                <span><i class="fa-solid fa-lock" style="color:var(--gold)"></i> معاملة آمنة</span>
+                <span><i class="fa-solid fa-truck-fast" style="color:var(--gold)"></i> توصيل سريع</span>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const pid = params.get('id');
+        const preColor = params.get('preColor');
+        let unitPrice = 0, discountPrice = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if(!pid) {
+                // عرض منتج وهمي في حالة عدم وجود ID للتجربة فقط
+                renderForm({
+                    name: "ساعة كلاسيكية - إصدار خاص",
+                    price: 8500,
+                    discount_price: 6900,
+                    colors: ["#1a1a1a", "#c5a028", "#f2f2f2", "#5e4b35"],
+                    sizes: ["42mm", "45mm"]
+                });
+                return;
+            }
+
+            try {
+                const req = await fetch(`/api/products/${pid}`);
+                const data = await req.json();
+                renderForm(data);
+            } catch(e) { console.log('Error loading product', e); }
+            
+            document.getElementById('orderForm').addEventListener('submit', sendOrder);
+        });
+
+        function renderForm(p) {
+            document.getElementById('prodName').innerText = p.name;
+            unitPrice = parseFloat(p.price);
+            if(p.discount_price) discountPrice = parseFloat(p.discount_price);
+
+            const area = document.getElementById('colorsArea');
+            const hiddenInput = document.getElementById('finalColor');
+            area.innerHTML = '';
+
+            let cList = [];
+            // معالجة الألوان سواء كانت مصفوفة أو نص JSON
+            try { 
+                if(Array.isArray(p.colors)) cList = p.colors;
+                else if(typeof p.colors === 'string') cList = JSON.parse(p.colors);
+            } catch(e) { cList = []; }
+
+            if (cList && cList.length > 0) {
+                const scrollContainer = document.createElement('div');
+                scrollContainer.className = 'color-scroll-container';
+
+                cList.forEach((c, i) => {
+                    const isChecked = (c === preColor) || (i === 0 && !preColor);
+                    if(isChecked) hiddenInput.value = c;
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'color-item-wrapper';
+                    const borderColor = (c.toLowerCase() === '#ffffff' || c.toLowerCase() === '#f2f2f2') ? '#e0e0e0' : 'transparent';
+
+                    wrapper.innerHTML = `
+                        <div style="position:relative">
+                            <input type="radio" name="c_rad" id="c_${i}" class="color-radio" value="${c}" ${isChecked?'checked':''} onchange="document.getElementById('finalColor').value='${c}'">
+                            <label for="c_${i}" class="color-circle" style="background:${c}; border-color:${borderColor}"></label>
+                        </div>
+                    `;
+                    scrollContainer.appendChild(wrapper);
+                });
+                area.appendChild(scrollContainer);
+            } else {
+                hiddenInput.value = "Default";
+                area.innerHTML = "<span style='font-size:0.85em; color:#999;'>قياسي</span>";
+            }
+
+            const sSelect = document.getElementById('sizeSelect');
+            
+            let sList = [];
+            try { 
+                if(Array.isArray(p.sizes)) sList = p.sizes;
+                else if(typeof p.sizes === 'string') sList = JSON.parse(p.sizes);
+            } catch(e) { sList = []; }
+
+            if(sList && sList.length > 0) {
+                sSelect.innerHTML = '<option value="">تحديد</option>';
+                sList.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s;
+                    opt.innerText = s;
+                    sSelect.appendChild(opt);
+                });
+            } else {
+                sSelect.innerHTML = '<option value="Standard" selected>قياسي</option>';
+            }
+            calc();
+        }
+
+        window.calc = function() {
+            let qty = parseInt(document.getElementById('qtyInput').value);
+            if(!qty || qty < 1) { qty = 1; }
+            
+            const originalTotal = qty * unitPrice;
+            const discountTotal = discountPrice ? (qty * discountPrice) : null;
+            const oldEl = document.getElementById('oldPrice');
+            const finalEl = document.getElementById('finalPrice');
+
+            if(discountTotal && discountTotal < originalTotal) {
+                oldEl.innerText = originalTotal.toLocaleString();
+                oldEl.style.display = 'inline';
+                finalEl.innerText = discountTotal.toLocaleString();
+            } else {
+                oldEl.style.display = 'none';
+                finalEl.innerText = originalTotal.toLocaleString();
+            }
+        }
+
+        async function sendOrder(e) {
+            e.preventDefault();
+            
+            // التحقق من وجود ID المنتج
+            if(!pid) {
+                alert("خطأ: رابط الصفحة غير صحيح (مفقود معرف المنتج)");
+                return;
+            }
+
+            const btn = document.getElementById('btnSubmit');
+            const originalContent = btn.innerHTML;
+            
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> جاري المعالجة...'; 
+            btn.disabled = true; 
+            btn.style.opacity = '0.8';
+
+            // تجميع البيانات
+            const formData = new FormData(document.getElementById('orderForm'));
+            const data = Object.fromEntries(formData.entries());
+            
+            data.product_id = pid;
+            // قيم افتراضية مطلوبة للسيرفر
+            data.country = "الجزائر";
+            data.state = "-";
+            data.city = "-";
+            data.notes = "";
+
+            try {
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+
+                if(result.success) {
+                    // عرض واجهة النجاح
+                    document.querySelector('.container').innerHTML = `
+                        <div class="success-overlay">
+                            <div style="width:70px; height:70px; background:var(--gold-light); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                                <i class="fas fa-check" style="font-size:30px; color:var(--gold);"></i>
+                            </div>
+                            <h3 style="color:var(--black); margin-bottom:10px;">تم تسجيل الطلب</h3>
+                            <p style="color:#757575;"> رقم الطلب (احتفظ به!): #${result.orderId}</p>
+                            <p style="color:#757575;">شكرا لتعاملكم معنا! سيتم الاتصال بكم قريبا لتأكيد الطلب</p>
+                            <a href="/" style="display:inline-block; margin-top:25px; color:var(--black); font-weight:700; text-decoration:none; border-bottom: 2px solid var(--gold);">العودة للمتجر</a>
+                        </div>`;
+                } else {
+                    alert('عذراً: ' + result.message);
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                }
+            } catch(err) {
+                console.error(err);
+                alert('حدث خطأ في الاتصال، حاول مرة أخرى.');
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        }
+    </script>
+</body>
+</html>

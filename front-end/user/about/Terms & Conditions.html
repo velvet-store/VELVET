@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سياسات المتجر | Velvet Store</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #c5a059; 
+            --bg-light: #f9f9f9;
+            --text-color: #555;
+            --border-color: #eee;
+            --font-main: 'Tajawal', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-light);
+            color: var(--primary);
+            line-height: 1.8;
+        }
+
+        /* --- Header --- */
+        .policy-header {
+            background: #fff;
+            padding: 20px 5%;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .brand-logo span { color: var(--accent); }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover { color: var(--accent); }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            text-decoration: none;
+            color: var(--text-color);
+            border-radius: 8px;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #fff9eb;
+            color: var(--accent);
+            padding-right: 20px;
+        }
+
+        .nav-link i { margin-left: 10px; width: 20px; }
+
+        /* --- Content --- */
+        .content-area {
+            background: #fff;
+            padding: 50px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+        }
+
+        .policy-section {
+            margin-bottom: 60px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 40px;
+        }
+
+        .policy-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .last-updated {
+            display: block;
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: var(--accent);
+            margin: 25px 0 15px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        p { margin-bottom: 15px; color: var(--text-color); }
+
+        ul {
+            list-style: none;
+            margin-bottom: 20px;
+            padding-right: 20px;
+        }
+
+        ul li {
+            position: relative;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        ul li::before {
+            content: "•";
+            color: var(--accent);
+            font-weight: bold;
+            position: absolute;
+            right: -20px;
+        }
+
+        .alert-box {
+            background: #fff9eb;
+            border: 1px solid #ffeeba;
+            padding: 15px;
+            border-radius: 8px;
+            color: #856404;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 50px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+            .sidebar {
+                position: relative; top: 0; margin-bottom: 20px; padding: 15px;
+                overflow-x: auto; white-space: nowrap; display: flex; gap: 10px;
+            }
+            .nav-link { display: inline-block; margin: 0; }
+            .content-area { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="policy-header">
+        <a href="/" class="brand-logo"><span>Velvet</span></a>
+        <a href="/" class="back-btn">العودة للمتجر <i class="fas fa-arrow-left"></i></a>
+    </header>
+
+    <div class="container">
+        <aside class="sidebar">
+            <a href="#terms" class="nav-link active" onclick="activateLink(this)"><i class="fas fa-file-contract"></i> شروط الخدمة</a>
+            <a href="#payment" class="nav-link" onclick="activateLink(this)"><i class="fas fa-money-bill-wave"></i> الدفع والتوصيل</a>
+            <a href="#privacy" class="nav-link" onclick="activateLink(this)"><i class="fas fa-user-lock"></i> الخصوصية</a>
+            <a href="#returns" class="nav-link" onclick="activateLink(this)"><i class="fas fa-box-open"></i> الاسترجاع</a>
+        </aside>
+
+        <main class="content-area">
+            
+            <!-- 1. شروط الخدمة -->
+            <section id="terms" class="policy-section">
+                <h1>شروط الخدمة</h1>
+                <span class="last-updated">آخر تحديث: 29 يناير 2026</span>
+                
+                <p>مرحباً بكم في متجر Velvet. نهدف لتقديم تجربة تسوق سلسة وبسيطة دون الحاجة لتعقيدات التسجيل.</p>
+
+                <h2>1. آلية الطلب</h2>
+                <p>لا يتطلب الشراء من متجرنا إنشاء حساب. يتم الطلب عبر ملء نموذج بيانات التوصيل فقط. بتقديمك للطلب، فإنك تلتزم بصحة البيانات المقدمة (الاسم، رقم الهاتف، العنوان) لضمان وصول المنتج إليك.</p>
+
+                <h2>2. جدية الطلب</h2>
+                <div class="alert-box">
+                    <strong>تنويه هام:</strong> نظراً لأننا نعتمد خدمة الدفع عند الاستلام، فإن تأكيد الطلب يعتبر عقداً ملزماً بيننا. يرجى التأكد من رغبتك في المنتج قبل إتمام الطلب تفادياً لتكاليف الشحن والتشغيل التي يتحملها المتجر.
+                </div>
+
+                <h2>3. حقوق الملكية</h2>
+                <p>جميع صور المنتجات والمحتوى المعروض هي ملكية خاصة لـ Velvet، ويمنع استخدامها لأغراض تجارية دون إذن.</p>
+            </section>
+
+            <!-- 2. الدفع والتوصيل -->
+            <section id="payment" class="policy-section">
+                <h1>الدفع والشحن</h1>
+                
+                <h2>1. وسيلة الدفع</h2>
+                <p>نوفر وسيلة دفع واحدة وهي <strong>"الدفع عند الاستلام"</strong>. لا نطلب منك أي بيانات بنكية أو تحويلات مسبقة. يتم دفع كامل المبلغ لمندوب التوصيل عند استلام الشحنة.</p>
+
+                <h2>2. رسوم التوصيل</h2>
+                <p>قد تضاف رسوم توصيل رمزية تظهر بوضوح في ملخص الطلب قبل التأكيد. هذه الرسوم تدفع لشركات الشحن لضمان سرعة التوصيل.</p>
+
+                <h2>3. الاستلام والمعاينة</h2>
+                <p>يحق للعميل معاينة المغلف الخارجي للتأكد من سلامته قبل الاستلام. في حال رفض الاستلام لسبب غير مبرر (تغيير رأي بعد خروج الشحنة)، يحق للمتجر المطالبة برسوم الشحن.</p>
+            </section>
+
+            <!-- 3. سياسة الخصوصية -->
+            <section id="privacy" class="policy-section">
+                <h1>سياسة الخصوصية</h1>
+                <p>نحترم خصوصيتك ونقدر ثقتك. بما أننا لا نقوم بإنشاء حسابات، فإن سياسة بياناتنا بسيطة جداً:</p>
+
+                <h2>1. البيانات المطلوبة</h2>
+                <p>نجمع فقط البيانات اللازمة لتوصيل الطلب:</p>
+                <ul>
+                    <li>الاسم الكامل (للتسليم).</li>
+                    <li>رقم الهاتف (للتواصل من قبل المندوب).</li>
+                    <li>العنوان التفصيلي (للتوصيل).</li>
+                </ul>
+
+                <h2>2. حفظ البيانات</h2>
+                <p>نحتفظ ببيانات طلبك لفترة محدودة لغرض متابعة التوصيل وخدمة ما بعد البيع (مثل الاسترجاع). لا نقوم بمشاركة رقم هاتفك مع أي طرف ثالث غير شركة الشحن.</p>
+            </section>
+
+            <!-- 4. الاستبدال والاسترجاع -->
+            <section id="returns" class="policy-section">
+                <h1>الاستبدال والاسترجاع</h1>
+                <p>رغم أن الدفع يتم عند الاستلام، إلا أن حقك في الاسترجاع محفوظ وفق الشروط التالية:</p>
+
+                <h2>1. المدة المسموحة</h2>
+                <p>يمكنك طلب استبدال المنتج خلال <strong>5  ايام</strong> من تاريخ الاستلام، أو استرجاعه خلال <strong>3 أيام</strong> في حال وجود عيب مصنعي.</p>
+
+                <h2>2. شروط الاسترجاع</h2>
+                <ul>
+                    <li>أن يكون المنتج غير مستخدم وبحالته الأصلية تماماً.</li>
+                    <li>عدم نزع العلامات التجارية (Tags) أو إتلاف العلبة الأصلية.</li>
+                    <li>تتحمل العميل رسوم الشحن في حال الاستبدال (لتغيير المقاس أو اللون) دون وجود عيب في المنتج.</li>
+                </ul>
+
+                <h2>3. آلية استرداد المبلغ</h2>
+                <p>بما أن الدفع تم نقداً، في حال الاسترجاع المقبول، يتم استرداد المبلغ عبر:</p>
+                <ul>
+                    <li>تحويل بنكي لحساب العميل.</li>
+                    <li>أو عبر المحافظ الإلكترونية (حسب المتاح في بلدك).</li>
+                </ul>
+                <p>يتم التحويل بعد وصول المنتج لمخازنا وفحصه للتأكد من سلامته.</p>
+            </section>
+
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2026 Velvet Store. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <script>
+        function activateLink(element) {
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        window.addEventListener('scroll', () => {
+            let sections = document.querySelectorAll('.policy-section');
+            let navLinks = document.querySelectorAll('.nav-link');
+            
+            sections.forEach(sec => {
+                let top = window.scrollY;
+                let offset = sec.offsetTop - 150;
+                let height = sec.offsetHeight;
+                let id = sec.getAttribute('id');
+                
+                if(top >= offset && top < offset + height) {
+                    navLinks.forEach(links => {
+                        links.classList.remove('active');
+                        document.querySelector('.nav-link[href*=' + id + ']').classList.add('active');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

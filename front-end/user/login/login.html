@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VELVET | Private Access</title>
+    
+    <!-- الأيقونات -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- الخطوط الفاخرة -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Tajawal:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-cream: #F9F7F2;
+            --surface: #FFFFFF;
+            --primary: #121212;
+            --gold: #C5A028;
+            --gray: #888888;
+            --border: #E0E0E0;
+            --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+
+        body {
+            background-color: var(--bg-cream);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Tajawal', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* زخرفة خلفية ناعمة (شعار كبير باهت) */
+        .bg-watermark {
+            position: absolute;
+            font-family: 'Cinzel', serif;
+            font-size: 20vw;
+            color: rgba(197, 160, 40, 0.03); /* ذهبي شفاف جداً */
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-10deg);
+            z-index: 0;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.85); /* شبه شفاف */
+            backdrop-filter: blur(15px);
+            padding: 50px 40px;
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05); /* ظل ناعم جداً */
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            /* إطار زخرفي */
+            border-top: 3px solid var(--gold); 
+        }
+
+        .logo-area {
+            margin-bottom: 40px;
+        }
+
+        .logo-text {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            color: var(--primary);
+            letter-spacing: 4px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .logo-sub {
+            font-size: 0.75rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* تصميم الحقول (Minimalist) */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px 0;
+            border: none;
+            border-bottom: 1px solid #CCC;
+            background: transparent;
+            font-size: 1rem;
+            color: var(--primary);
+            font-family: 'Tajawal', sans-serif;
+            text-align: center;
+            transition: var(--transition);
+            border-radius: 0; /* حواف حادة */
+        }
+
+        .input-field::placeholder {
+            color: #AAA;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            font-family: 'Cinzel', serif; /* البليس هولدر بالخط الفاخر */
+        }
+
+        .input-field:focus {
+            border-bottom-color: var(--gold);
+            padding-bottom: 15px; /* حركة بسيطة */
+        }
+
+        /* أيقونة الحقل */
+        .field-icon {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #CCC;
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        .input-field:focus ~ .field-icon {
+            color: var(--gold);
+        }
+
+        /* زر الدخول */
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login:hover {
+            background-color: var(--gold);
+            letter-spacing: 4px; /* تباعد الحروف عند التحويم */
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 30px;
+            color: var(--gray);
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .back-link:hover { color: var(--primary); }
+
+        /* رسالة الخطأ */
+        #message {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #C0392B;
+            height: 20px;
+        }
+
+        /* استجابة */
+        @media (max-width: 480px) {
+            .login-card {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                border: none;
+                background: var(--bg-cream); /* في الموبايل تصبح الخلفية كاملة */
+            }
+            .bg-watermark { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-watermark">VELVET</div>
+
+    <div class="login-card">
+        <div class="logo-area">
+            <div class="logo-text">VELVET</div>
+            <div class="logo-sub">LOGIN
+            </div>
+        </div>
+
+        <form id="loginForm">
+            <div class="input-wrapper">
+                <input type="text" id="username" class="input-field" placeholder="USERNAME" required autocomplete="off">
+                <i class="ri-user-line field-icon"></i>
+            </div>
+
+            <div class="input-wrapper">
+                <input type="password" id="password" class="input-field" placeholder="PASSWORD" required>
+                <i class="ri-lock-line field-icon"></i>
+            </div>
+
+            <button type="submit" class="btn-login">ACCESS</button>
+        </form>
+
+        <div id="message"></div>
+
+        <a href="../home-store/home-store.html" class="back-link">
+            العودة للمتجر
+        </a>
+    </div>
+
+    <script src="login-logic.js"></script>
+    <script>
+        // تأثير بسيط عند الكتابة
+        const inputs = document.querySelectorAll('.input-field');
+        inputs.forEach(inp => {
+            inp.addEventListener('input', () => {
+                document.getElementById('message').innerText = ''; // مسح الخطأ عند الكتابة
+            });
+        });
+    </script>
+</body>
+</html>
